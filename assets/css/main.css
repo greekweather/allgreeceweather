@@ -186,6 +186,38 @@ a { color: inherit; }
   padding: 110px 0 120px;
 }
 
+.map-container {
+  height: 70vh;
+  min-height: 420px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  background: #dbeafe;
+}
+
+.map-attribution {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: .85rem;
+  text-align: center;
+}
+
+.map-attribution a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.map-attribution a:hover,
+.map-attribution a:focus-visible {
+  text-decoration: underline;
+}
+
+.leaflet-control-layers {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-family: inherit;
+}
+
 @media (max-width: 900px) {
   .post-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -201,4 +233,5 @@ a { color: inherit; }
   .article-filters {flex-direction: column;}
   .article-filters label {min-width: 0;}
   .article-filters select {width: 100%;}
+  .map-container { height: 60vh; min-height: 320px; }
 }

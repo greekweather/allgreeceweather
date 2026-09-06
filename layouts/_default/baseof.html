@@ -31,6 +31,7 @@
       <nav class="site-nav" aria-label="Κύρια πλοήγηση">
         <a href="{{ "" | relURL }}">Αρχική</a>
         <a href="{{ "posts/" | relURL }}">Άρθρα</a>
+        <a href="{{ "maps/" | relURL }}">Χάρτες</a>
       </nav>
     </div>
   </header>
@@ -68,5 +69,6 @@
       element.textContent = formatted;
   });
   </script>
+  {{ block "scripts" . }}{{ end }}
 </body>
 </html>
