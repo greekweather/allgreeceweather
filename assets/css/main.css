@@ -186,13 +186,31 @@ a { color: inherit; }
   padding: 110px 0 120px;
 }
 
+.maps-section {
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  background: var(--surface);
+}
+
+.maps-section .container {
+  position: relative;
+}
+
 .map-container {
   height: 70vh;
   min-height: 420px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden;
   background: #dbeafe;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+.maps-section .leaflet-container {
+  position: relative;
+  z-index: 0;
 }
 
 .map-attribution {
@@ -233,5 +251,8 @@ a { color: inherit; }
   .article-filters {flex-direction: column;}
   .article-filters label {min-width: 0;}
   .article-filters select {width: 100%;}
-  .map-container { height: 60vh; min-height: 320px; }
+  .map-container {
+    height: 60vh;
+    min-height: 320px;
+  }
 }
