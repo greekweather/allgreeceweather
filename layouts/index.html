@@ -15,7 +15,7 @@
     </div>
     {{ $posts := where site.RegularPages "Section" "posts" }}
     <div class="post-grid">
-      {{ range first 9 (sort $posts "Date" "desc") }}
+      {{ range first 6 (sort $posts "Date" "desc") }}
         {{ partial "post-card.html" . }}
       {{ else }}
         <p>Δεν υπάρχουν ακόμη άρθρα. Δημιούργησε ένα αρχείο μέσα στον φάκελο <code>content/posts/</code>.</p>

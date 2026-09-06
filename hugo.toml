@@ -11,6 +11,9 @@ canonifyURLs = false
   siteDescription = 'Μετεωρολογικές αναλύσεις, προγνώσεις και άρθρα για τον καιρό στην Ελλάδα.'
   accent = '#1d6fe8'
 
+[taxonomies]
+  tag = 'tags'
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]

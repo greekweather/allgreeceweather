@@ -1,21 +1,112 @@
 {{ define "main" }}
+
 <section class="page-header">
   <div class="container">
     <p class="eyebrow">ΑΡΧΕΙΟ</p>
     <h1>Άρθρα</h1>
-    <p>Όλα τα δημοσιευμένα άρθρα, από το νεότερο στο παλαιότερο.</p>
+    <p>Όλα τα δημοσιευμένα άρθρα.</p>
   </div>
 </section>
+
 <section class="section">
   <div class="container">
-    <div class="post-grid">
-      {{ range .Paginator.Pages }}
+
+    <div class="article-filters">
+
+      <label>
+        <span>Ετικέτα</span>
+        <select id="tag-filter">
+          <option value="all">Όλες οι ετικέτες</option>
+          {{ range first 10 .Site.Taxonomies.tags.ByCount }}
+            <option value="{{ .Page.Title | urlize }}">
+              {{ .Page.Title }} ({{ .Count }})
+            </option>
+          {{ end }}
+        </select>
+      </label>
+
+      <label>
+        <span>Ταξινόμηση</span>
+        <select id="sort-filter">
+          <option value="newest">Νεότερα → Παλαιότερα</option>
+          <option value="oldest">Παλαιότερα → Νεότερα</option>
+        </select>
+      </label>
+
+    </div>
+
+    <div class="post-grid" id="articles-grid">
+
+      {{ range .Pages }}
         {{ partial "post-card.html" . }}
       {{ else }}
         <p>Δεν υπάρχουν ακόμη άρθρα.</p>
       {{ end }}
+
     </div>
-    {{ template "_internal/pagination.html" . }}
+
+    <p class="no-results" id="no-results" hidden>
+      Δεν βρέθηκαν άρθρα με τα συγκεκριμένα φίλτρα.
+    </p>
+
   </div>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const grid = document.getElementById("articles-grid");
+  const tagFilter = document.getElementById("tag-filter");
+  const sortFilter = document.getElementById("sort-filter");
+  const noResults = document.getElementById("no-results");
+
+  if (!grid || !tagFilter || !sortFilter) {
+    return;
+  }
+
+  const cards = Array.from(grid.querySelectorAll(".post-card"));
+
+  function updateArticles() {
+    const selectedTag = tagFilter.value;
+    const sortOrder = sortFilter.value;
+
+    cards.sort(function (a, b) {
+      const dateA = Number(a.dataset.date);
+      const dateB = Number(b.dataset.date);
+
+      return sortOrder === "newest"
+        ? dateB - dateA
+        : dateA - dateB;
+    });
+
+    cards.forEach(function (card) {
+      grid.appendChild(card);
+    });
+
+    let visibleCount = 0;
+
+    cards.forEach(function (card) {
+      const tags = card.dataset.tags
+        ? card.dataset.tags.split("|")
+        : [];
+
+      const matchesTag =
+        selectedTag === "all" || tags.includes(selectedTag);
+
+      card.hidden = !matchesTag;
+
+      if (matchesTag) {
+        visibleCount++;
+      }
+    });
+
+    noResults.hidden = visibleCount !== 0;
+  }
+
+  tagFilter.addEventListener("change", updateArticles);
+  sortFilter.addEventListener("change", updateArticles);
+
+  updateArticles();
+});
+</script>
+
 {{ end }}

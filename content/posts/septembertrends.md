@@ -4,6 +4,7 @@ date: 2026-09-03T23:57:00+03:00
 description: "Λίγες μέρες έντονης ζέστης απομένουν, με μεγάλο ενδιαφέρον για την συνέχεια."
 image: "images/seastorm.jpg"
 draft: false
+tags: ["Ελλάδα", "Μακροπρόθεσμες εκτιμήσεις"]
 ---
 
 *Φωτογραφία: [Nat Pikozh](https://www.flickr.com/photos/nat_pikozh/4081287340), [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/), μέσω Wikimedia Commons.*

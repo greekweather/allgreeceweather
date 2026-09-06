@@ -4,6 +4,7 @@ date: 2026-07-24T00:32:00+03:00
 description: "Ισχυρή και ασυνήθιστη για την εποχή κακοκαιρία θα επηρεάσει τις περισσότερες περιοχές της χώρας."
 image: "images/stormcell.jpg"
 draft: false
+tags: ["Ελλάδα", "Προγνώσεις", "Κακοκαιρίες"]
 ---
 
 *Φωτογραφία: [Lindzi60](https://commons.wikimedia.org/wiki/File:Storm_Cell_over_Aegina_Greece_Sept_2015_01.jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), μέσω Wikimedia Commons.*
