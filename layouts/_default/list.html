@@ -1,4 +1,5 @@
 {{ define "main" }}
+
 <section class="page-header">
   <div class="container">
     <p class="eyebrow">ΑΡΧΕΙΟ</p>
@@ -6,16 +7,212 @@
     <p>{{ .Description }}</p>
   </div>
 </section>
-<section class="section">
+
+<section class="section articles-section">
   <div class="container">
-    <div class="post-grid">
-      {{ range .Paginator.Pages }}
-        {{ partial "post-card.html" . }}
-      {{ else }}
-        <p>Δεν βρέθηκαν άρθρα.</p>
-      {{ end }}
+
+    <div class="articles-toolbar">
+      <div class="articles-sort">
+        <span class="articles-sort-label">Ταξινόμηση:</span>
+
+        <button
+          type="button"
+          class="sort-button is-active"
+          data-sort-view="latest"
+        >
+          Νεότερα
+        </button>
+
+        <button
+          type="button"
+          class="sort-button"
+          data-sort-view="popular"
+        >
+          Δημοφιλέστερα
+        </button>
+      </div>
     </div>
-    {{ template "_internal/pagination.html" . }}
+
+    <!-- Νεότερα άρθρα -->
+    <div id="latest-posts" data-sort-panel="latest">
+
+      <div class="post-grid">
+        {{ range .Paginator.Pages }}
+          {{ partial "post-card.html" . }}
+        {{ else }}
+          <p>Δεν βρέθηκαν άρθρα.</p>
+        {{ end }}
+      </div>
+
+      {{ template "_internal/pagination.html" . }}
+
+    </div>
+
+    <!-- Δημοφιλέστερα άρθρα -->
+    <div
+      id="popular-posts"
+      data-sort-panel="popular"
+      hidden
+    >
+
+      {{ $analytics := index site.Data "top-posts" }}
+
+      {{ with $analytics }}
+
+        {{ if .posts }}
+
+          <div class="popular-post-grid">
+
+            {{ range $index, $post := .posts }}
+
+              {{ $page := site.GetPage $post.path }}
+
+              {{ with $page }}
+
+                <article class="post-card popular-post-card">
+
+                  <a
+                    class="post-image-link"
+                    href="{{ .RelPermalink }}"
+                    aria-label="Ανάγνωση του άρθρου: {{ .Title }}"
+                  >
+                    {{ with .Params.image }}
+                      <img
+                        class="post-image"
+                        src="{{ . | relURL }}"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      >
+                    {{ else }}
+                      <div
+                        class="post-image post-image-placeholder"
+                        aria-hidden="true"
+                      >
+                        <span>Χωρίς εικόνα</span>
+                      </div>
+                    {{ end }}
+                  </a>
+
+                  <div class="post-card-body">
+
+                    <div class="popular-post-rank">
+                      #{{ add $index 1 }}
+                    </div>
+
+                    <div class="post-meta">
+                      <time
+                        class="post-date"
+                        data-timestamp="{{ .Date.Unix }}"
+                      >
+                        {{ .Date.Format "02/01/2006 15:04" }}
+                      </time>
+                    </div>
+
+                    <h3>
+                      <a href="{{ .RelPermalink }}">
+                        {{ .Title }}
+                      </a>
+                    </h3>
+
+                    <p>
+                      {{ .Description | default (.Summary | plainify) }}
+                    </p>
+
+                    <div class="popular-post-views">
+                      👁 {{ lang.NumFmt 0 $post.views }} προβολές
+                    </div>
+
+                    <a
+                      class="text-link"
+                      href="{{ .RelPermalink }}"
+                    >
+                      Διαβάστε το άρθρο
+                      <span aria-hidden="true">→</span>
+                    </a>
+
+                  </div>
+
+                </article>
+
+              {{ end }}
+
+            {{ end }}
+
+          </div>
+
+          <p class="popular-posts-note">
+            Βάσει προβολών των τελευταίων {{ .period_days }} ημερών.
+            Η κατάταξη ενημερώνεται αυτόματα.
+          </p>
+
+        {{ else }}
+
+          <div class="popular-empty">
+            <h2>Δεν υπάρχουν ακόμη δεδομένα</h2>
+            <p>
+              Η κατάταξη δημοφιλών άρθρων θα εμφανιστεί μόλις συλλεχθούν
+              αρκετά δεδομένα επισκεψιμότητας.
+            </p>
+          </div>
+
+        {{ end }}
+
+      {{ else }}
+
+        <div class="popular-empty">
+          <h2>Δεν υπάρχουν ακόμη δεδομένα</h2>
+          <p>
+            Η κατάταξη δημοφιλών άρθρων θα εμφανιστεί μόλις συλλεχθούν
+            δεδομένα επισκεψιμότητας.
+          </p>
+        </div>
+
+      {{ end }}
+
+    </div>
+
   </div>
 </section>
+
+<script>
+(function () {
+  var buttons = document.querySelectorAll("[data-sort-view]");
+  var panels = document.querySelectorAll("[data-sort-panel]");
+
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      var view = button.dataset.sortView;
+
+      buttons.forEach(function (item) {
+        item.classList.toggle(
+          "is-active",
+          item.dataset.sortView === view
+        );
+      });
+
+      panels.forEach(function (panel) {
+        panel.hidden = panel.dataset.sortPanel !== view;
+      });
+
+      window.history.replaceState(
+        null,
+        "",
+        view === "popular" ? "#popular" : "#latest"
+      );
+    });
+  });
+
+  if (window.location.hash === "#popular") {
+    var popularButton = document.querySelector(
+      '[data-sort-view="popular"]'
+    );
+
+    if (popularButton) {
+      popularButton.click();
+    }
+  }
+})();
+</script>
+
 {{ end }}
