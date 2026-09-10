@@ -30,6 +30,7 @@
         <select id="sort-filter">
           <option value="newest">Νεότερα → Παλαιότερα</option>
           <option value="oldest">Παλαιότερα → Νεότερα</option>
+          <option value="popular">Δημοφιλέστερα</option>
         </select>
       </label>
 
@@ -53,7 +54,7 @@
 </section>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const grid = document.getElementById("articles-grid");
   const tagFilter = document.getElementById("tag-filter");
   const sortFilter = document.getElementById("sort-filter");
@@ -65,17 +66,155 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const cards = Array.from(grid.querySelectorAll(".post-card"));
 
+  let topPosts = [];
+
+  try {
+    const response = await fetch(
+      "{{ "data/top-posts.json" | relURL }}",
+      {
+        cache: "no-store"
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+
+      topPosts = Array.isArray(data.posts) ? data.posts : [];
+    }
+  } catch (error) {
+    console.warn("Could not load top-posts.json:", error);
+  }
+
+  const popularity = new Map();
+
+  topPosts.forEach(function (post, index) {
+    if (typeof post === "string") {
+      popularity.set(post, {
+        rank: index,
+        visits: 0
+      });
+      return;
+    }
+
+    if (!post || typeof post !== "object") {
+      return;
+    }
+
+    const path =
+      post.path ||
+      post.url ||
+      post.permalink ||
+      post.href;
+
+    if (!path) {
+      return;
+    }
+
+    const visits = Number(
+      post.visits ??
+      post.views ??
+      post.count ??
+      0
+    );
+
+    popularity.set(path, {
+      rank: index,
+      visits: Number.isFinite(visits) ? visits : 0
+    });
+  });
+
+  function normalizePath(path) {
+    if (!path) {
+      return "";
+    }
+
+    try {
+      path = new URL(path, window.location.origin).pathname;
+    } catch (error) {
+    }
+
+    if (path.endsWith("/") === false) {
+      path += "/";
+    }
+
+    return path;
+  }
+
+  function getCardPath(card) {
+    const link = card.querySelector("a[href]");
+
+    if (!link) {
+      return "";
+    }
+
+    return normalizePath(link.getAttribute("href"));
+  }
+
+  function getPopularity(card) {
+    const path = getCardPath(card);
+
+    if (!path) {
+      return null;
+    }
+
+    if (popularity.has(path)) {
+      return popularity.get(path);
+    }
+
+    const withoutSlash = path.endsWith("/")
+      ? path.slice(0, -1)
+      : path;
+
+    if (popularity.has(withoutSlash)) {
+      return popularity.get(withoutSlash);
+    }
+
+    for (const [storedPath, value] of popularity.entries()) {
+      if (normalizePath(storedPath) === path) {
+        return value;
+      }
+    }
+
+    return null;
+  }
+
   function updateArticles() {
     const selectedTag = tagFilter.value;
     const sortOrder = sortFilter.value;
 
     cards.sort(function (a, b) {
+
+      if (sortOrder === "popular") {
+        const popularityA = getPopularity(a);
+        const popularityB = getPopularity(b);
+
+        if (popularityA && !popularityB) {
+          return -1;
+        }
+
+        if (!popularityA && popularityB) {
+          return 1;
+        }
+
+        if (popularityA && popularityB) {
+          if (popularityB.visits !== popularityA.visits) {
+            return popularityB.visits - popularityA.visits;
+          }
+
+          return popularityA.rank - popularityB.rank;
+        }
+
+        return Number(b.dataset.date) - Number(a.dataset.date);
+      }
+
       const dateA = Number(a.dataset.date);
       const dateB = Number(b.dataset.date);
 
-      return sortOrder === "newest"
-        ? dateB - dateA
-        : dateA - dateB;
+      if (sortOrder === "oldest") {
+        return dateA - dateB;
+      }
+
+      return dateB - dateA;
     });
 
     cards.forEach(function (card) {
@@ -90,7 +229,8 @@ document.addEventListener("DOMContentLoaded", function () {
         : [];
 
       const matchesTag =
-        selectedTag === "all" || tags.includes(selectedTag);
+        selectedTag === "all" ||
+        tags.includes(selectedTag);
 
       card.hidden = !matchesTag;
 

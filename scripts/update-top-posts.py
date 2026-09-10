@@ -118,7 +118,26 @@ def build_top_posts(groups: list[dict]) -> list[dict]:
         dimensions = group.get("dimensions") or {}
         path = dimensions.get("requestPath")
 
-        if not path or not path.startswith(POST_PREFIX):
+        if not path:
+            continue
+
+        path = str(path).strip()
+
+        if path.startswith("https://greekweather.github.io"):
+            path = path[len("https://greekweather.github.io"):]
+
+        elif path.startswith("http://greekweather.github.io"):
+            path = path[len("http://greekweather.github.io"):]
+
+        if not path.startswith("/"):
+            path = "/" + path
+
+        path = path.split("?", 1)[0]
+
+        if not path.endswith("/"):
+            path += "/"
+
+        if not path.startswith(POST_PREFIX):
             continue
 
         views = int(group.get("count") or 0)
