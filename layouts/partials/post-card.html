@@ -4,8 +4,18 @@
   data-tags="{{ with .Params.tags }}{{ range $index, $tag := . }}{{ if $index }}|{{ end }}{{ $tag | urlize }}{{ end }}{{ end }}"
 >
   <a class="post-image-link" href="{{ .RelPermalink }}" aria-label="Ανάγνωση του άρθρου: {{ .Title }}">
-    {{ with .Params.image }}
-      <img class="post-image" src="{{ . | relURL }}" alt="" loading="lazy" decoding="async">
+    {{ with resources.Get .Params.image }}
+      {{ with .Process "resize 700x webp q80" }}
+        <img
+          class="post-image"
+          src="{{ .RelPermalink }}"
+          width="{{ .Width }}"
+          height="{{ .Height }}"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        >
+      {{ end }}
     {{ else }}
       <div class="post-image post-image-placeholder" aria-hidden="true">
         <span>Χωρίς εικόνα</span>

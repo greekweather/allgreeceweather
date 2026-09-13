@@ -12,9 +12,17 @@
       {{ with .Description }}<p class="article-lead">{{ . }}</p>{{ end }}
     </header>
 
-    {{ with .Params.image }}
+    {{ with resources.Get .Params.image }}
     <figure class="article-hero">
-      <img src="{{ . | absURL }}" alt="{{ $.Title }}" decoding="async">
+      {{ with .Process "resize 1600x webp q85" }}
+      <img
+        src="{{ .RelPermalink }}"
+        width="{{ .Width }}"
+        height="{{ .Height }}"
+        alt="{{ $.Title }}"
+        decoding="async"
+      >
+      {{ end }}
     </figure>
     {{ end }}
 
