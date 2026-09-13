@@ -1,5 +1,5 @@
 baseURL = 'https://example.com/'
-languageCode = 'el'
+locale = 'el-GR'
 title = 'AllGreeceWeather'
 pagination.pagerSize = 9
 timeZone = 'Europe/Athens'

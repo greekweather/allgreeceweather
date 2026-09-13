@@ -55,7 +55,7 @@
       hidden
     >
 
-      {{ $analytics := index site.Data "top-posts" }}
+      {{ $analytics := index hugo.Data "top-posts" }}
 
       {{ with $analytics }}
 
