@@ -181,7 +181,7 @@ a { color: inherit; }
   position: relative;
   background:
     linear-gradient(rgba(11, 18, 32, .62), rgba(11, 18, 32, .78)),
-    url("/allgreeceweather/images/lightningbackground.jpg") center center / cover no-repeat;
+    var(--hero-background) center center / cover no-repeat;
   color: white;
   padding: 110px 0 120px;
 }

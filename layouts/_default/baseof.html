@@ -17,6 +17,15 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>{{ $title }}</title>
   <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ "index.xml" | absURL }}">
+  {{ $heroImage := resources.Get "images/lightningbackground.jpg" }}
+  {{ $heroImage = $heroImage.Process "resize 1920x webp q80" }}
+
+  <style>
+    :root {
+      --hero-background: url("{{ $heroImage.RelPermalink }}");
+    }
+  </style>
+
   {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
   {{ block "head" . }}{{ end }}
