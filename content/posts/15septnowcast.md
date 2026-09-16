@@ -2,7 +2,7 @@
 title: "Πού βρέχει και πώς θα εξελιχθεί η κακοκαιρία; Τι θα γίνει στην Αττική;"
 date: 2026-09-15T16:26:00+03:00
 description: "Τι δείχνει το ραντάρ αυτή τη στιγμή και πού θα εκδηλωθούν φαινόμενα τις επόμενες ώρες."
-image: "images/radar.jpg"
+image: "images/rainontheground.jpg"
 draft: false
 tags: ["Ελλάδα", "Nowcast"]
 ---
