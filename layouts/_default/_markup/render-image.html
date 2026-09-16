@@ -1,0 +1,8 @@
+{{- $src := .Destination -}}
+{{- $resource := resources.Get $src -}}
+
+{{- if $resource -}}
+  <img src="{{ $resource.RelPermalink }}" alt="{{ .Text }}">
+{{- else -}}
+  <img src="{{ $src | safeURL }}" alt="{{ .Text }}">
+{{- end -}}
