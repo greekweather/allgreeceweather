@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { requireAdmin } from '@/lib/auth'
+import { athensLocalToUTC } from '@/lib/date'
 import { normalizePublishedAt, parseTags, postInputSchema } from '@/lib/validation'
 
 function formDataToInput(formData: FormData) {
@@ -24,7 +25,10 @@ export async function createPostAction(formData: FormData) {
   await requireAdmin()
   const supabase = await createClient()
   const input = formDataToInput(formData)
-  const publishedAt = normalizePublishedAt(input.published_at, input.published)
+  const normalizedPublishedAt = normalizePublishedAt(input.published_at, input.published)
+  const publishedAt = normalizedPublishedAt
+    ? athensLocalToUTC(normalizedPublishedAt)
+    : null
 
   const { error } = await supabase.from('posts').insert({
     title: input.title,
@@ -51,7 +55,10 @@ export async function updatePostAction(formData: FormData) {
   const id = String(formData.get('id') || '')
   if (!id) throw new Error('Λείπει το ID του άρθρου.')
   const input = formDataToInput(formData)
-  const publishedAt = normalizePublishedAt(input.published_at, input.published)
+  const normalizedPublishedAt = normalizePublishedAt(input.published_at, input.published)
+  const publishedAt = normalizedPublishedAt
+    ? athensLocalToUTC(normalizedPublishedAt)
+    : null
 
   const { data: oldPost, error: oldError } = await supabase.from('posts').select('slug').eq('id', id).single()
   if (oldError || !oldPost) throw new Error('Το άρθρο δεν βρέθηκε.')
