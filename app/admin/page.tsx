@@ -1,83 +1,62 @@
-import { deletePostAction, signOutAction } from "@/app/actions";
-import { formatDate } from "@/components/PostCard";
-import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminPage() {
-	const user = await requireAdmin();
 	const supabase = await createClient();
-	const { data, error } = await supabase
-		.from("posts")
-		.select("id,title,slug,published,published_at,views,updated_at")
-		.order("updated_at", { ascending: false });
-	if (error) throw new Error(error.message);
+
+	const [{ count: posts }, { count: publishedPosts }, { count: drafts }] = await Promise.all([
+		supabase.from("posts").select("*", { count: "exact", head: true }),
+		supabase.from("posts").select("*", { count: "exact", head: true }).eq("published", true),
+		supabase.from("posts").select("*", { count: "exact", head: true }).eq("published", false),
+	]);
+
 	return (
 		<>
-			<section className="admin-header">
-				<div className="container">
-					<p className="eyebrow">ADMIN</p>
-					<h1>AllGreeceWeather</h1>
-					<div className="admin-nav">
-						<span>{user.email}</span>
-						<a className="button secondary" href="/admin">
-							Άρθρα
-						</a>
-						<a className="button secondary" href="/admin/posts/new">
-							Νέο άρθρο
-						</a>
-						<form action={signOutAction}>
-							<button className="button" type="submit">
-								Αποσύνδεση
-							</button>
-						</form>
+			<header className="admin-page-header">
+				<div>
+					<p className="eyebrow">DASHBOARD</p>
+					<h1>Πίνακας ελέγχου</h1>
+					<p>Διαχείριση του περιεχομένου του AllGreeceWeather.</p>
+				</div>
+			</header>
+
+			<section className="admin-dashboard-grid">
+				<a className="admin-stat-card" href="/admin/posts">
+					<span>Άρθρα</span>
+					<strong>{posts ?? 0}</strong>
+					<small>Όλα τα άρθρα</small>
+				</a>
+
+				<a className="admin-stat-card" href="/admin/posts?status=published">
+					<span>Δημοσιευμένα</span>
+					<strong>{publishedPosts ?? 0}</strong>
+					<small>Δημοσιευμένα άρθρα</small>
+				</a>
+
+				<a className="admin-stat-card" href="/admin/posts?status=draft">
+					<span>Πρόχειρα</span>
+					<strong>{drafts ?? 0}</strong>
+					<small>Μη δημοσιευμένα άρθρα</small>
+				</a>
+			</section>
+
+			<section className="admin-section">
+				<div className="admin-section-header">
+					<div>
+						<h2>Γρήγορες ενέργειες</h2>
+						<p>Συχνές ενέργειες διαχείρισης.</p>
 					</div>
 				</div>
-			</section>
-			<section className="section">
-				<div className="container">
-					<div className="form-card admin-table-wrap">
-						<table className="admin-table">
-							<thead>
-								<tr>
-									<th>Τίτλος</th>
-									<th>Κατάσταση</th>
-									<th>Δημοσίευση</th>
-									<th>Προβολές</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								{(data ?? []).map((post) => (
-									<tr key={post.id}>
-										<td>
-											<strong>{post.title}</strong>
-											<br />
-											<small>{post.slug}</small>
-										</td>
-										<td>
-											<span className={`status ${post.published ? "published" : "draft"}`}>
-												{post.published ? "Δημοσιευμένο" : "Πρόχειρο"}
-											</span>
-										</td>
-										<td>{formatDate(post.published_at)}</td>
-										<td>{post.views}</td>
-										<td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-											<a className="button secondary" href={`/admin/posts/${post.id}/edit`}>
-												Επεξεργασία
-											</a>
-											<form action={deletePostAction}>
-												<input type="hidden" name="id" value={post.id} />
-												<button className="button danger" type="submit">
-													Διαγραφή
-												</button>
-											</form>
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-						{!data?.length && <p>Δεν υπάρχουν άρθρα.</p>}
-					</div>
+
+				<div className="admin-actions-grid">
+					<a className="admin-action-card" href="/admin/posts/new">
+						<strong>Νέο άρθρο</strong>
+						<span>Δημιούργησε ένα νέο άρθρο.</span>
+					</a>
+
+					<a className="admin-action-card" href="/admin/tags/new">
+						<strong>Νέα ετικέτα</strong>
+						<span>Πρόσθεσε μια νέα ετικέτα.</span>
+					</a>
 				</div>
 			</section>
 		</>

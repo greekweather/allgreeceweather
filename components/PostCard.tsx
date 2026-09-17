@@ -30,18 +30,21 @@ export function PostCard({ post }: { post: Post }) {
 					<a href={`/posts/${post.slug}`}>{post.title}</a>
 				</h3>
 				<p>{post.description}</p>
-				{post.tags.length > 0 && (
+
+				<div className="post-card-footer">
 					<div className="post-tags">
-						{post.tags.map((tag) => (
-							<span className="post-tag" key={tag}>
-								{tag}
-							</span>
-						))}
+						{post.tags.length > 0 &&
+							post.tags.map((tag) => (
+								<span className="post-tag" key={tag}>
+									{tag}
+								</span>
+							))}
 					</div>
-				)}
-				<a className="text-link" href={`/posts/${post.slug}`}>
-					Διαβάστε το άρθρο <span aria-hidden="true">→</span>
-				</a>
+
+					<a className="text-link" href={`/posts/${post.slug}`}>
+						Διαβάστε το άρθρο <span aria-hidden="true">→</span>
+					</a>
+				</div>
 			</div>
 		</article>
 	);

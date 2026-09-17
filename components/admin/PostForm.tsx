@@ -11,7 +11,7 @@ export type FormPost = {
 	content: string;
 	image_url: string;
 	image_alt: string;
-	tags: string;
+	tag_ids: string[];
 	published: boolean;
 	published_at: string;
 };
@@ -19,9 +19,14 @@ export type FormPost = {
 export function PostForm({
 	post,
 	action,
+	availableTags,
 }: {
 	post?: FormPost;
 	action: (formData: FormData) => void | Promise<void>;
+	availableTags: {
+		id: string;
+		name: string;
+	}[];
 }) {
 	const [imageUrl, setImageUrl] = useState(post?.image_url ?? "");
 	const [imageAlt, setImageAlt] = useState(post?.image_alt ?? "");
@@ -93,13 +98,25 @@ export function PostForm({
 				}}
 			/>
 			<div className="form-field">
-				<label htmlFor="tags">Ετικέτες</label>
-				<input
-					id="tags"
-					name="tags"
-					placeholder="Ελλάδα, Προγνώσεις, Κακοκαιρίες"
-					defaultValue={post?.tags}
-				/>
+				<label>Ετικέτες</label>
+
+				<div className="tag-selector">
+					{availableTags.length > 0 ? (
+						availableTags.map((tag) => (
+							<label className="tag-option" key={tag.id}>
+								<input
+									type="checkbox"
+									name="tag_ids"
+									value={tag.id}
+									defaultChecked={post?.tag_ids.includes(tag.id)}
+								/>
+								<span>{tag.name}</span>
+							</label>
+						))
+					) : (
+						<p>Δεν υπάρχουν διαθέσιμες ετικέτες.</p>
+					)}
+				</div>
 			</div>
 			<div className="form-row">
 				<div className="form-field">
@@ -112,9 +129,13 @@ export function PostForm({
 					/>
 				</div>
 				<div className="form-field" style={{ alignSelf: "end" }}>
-					<label className="checkbox-row">
-						<input type="checkbox" name="published" defaultChecked={post?.published ?? false} />{" "}
-						Δημοσιευμένο
+					<label className="publish-option">
+						<input
+							type="checkbox"
+							name="published"
+							defaultChecked={post?.published}
+						/>
+						<span>Δημοσιευμένο</span>
 					</label>
 				</div>
 			</div>

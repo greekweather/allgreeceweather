@@ -30,18 +30,6 @@ export const postInputSchema = z.object({
 	published_at: z.string().trim().optional().default(""),
 });
 
-export function parseTags(raw: string) {
-	return Array.from(
-		new Set(
-			raw
-				.split(",")
-				.map((x) => x.trim())
-				.filter(Boolean)
-				.slice(0, 20),
-		),
-	);
-}
-
 export function normalizePublishedAt(raw: string, published: boolean) {
 	if (!published) return null;
 	if (!raw) return new Date().toISOString();
