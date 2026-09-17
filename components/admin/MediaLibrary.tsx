@@ -13,6 +13,66 @@ type MediaFile = {
 	content_type: string | null;
 };
 
+async function optimizeImage(file: File): Promise<Blob> {
+	const MAX_WIDTH = 2000;
+	const QUALITY = 0.8;
+
+	const image = new window.Image();
+
+	const objectUrl = URL.createObjectURL(file);
+
+	try {
+		await new Promise<void>((resolve, reject) => {
+			image.onload = () => resolve();
+			image.onerror = () =>
+				reject(new Error("Δεν ήταν δυνατή η ανάγνωση της εικόνας."));
+			image.src = objectUrl;
+		});
+
+		const scale = Math.min(
+			1,
+			MAX_WIDTH / image.naturalWidth,
+		);
+
+		const width = Math.round(image.naturalWidth * scale);
+		const height = Math.round(image.naturalHeight * scale);
+
+		const canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+
+		const context = canvas.getContext("2d");
+
+		if (!context) {
+			throw new Error("Δεν ήταν δυνατή η δημιουργία canvas.");
+		}
+
+		context.drawImage(image, 0, 0, width, height);
+
+		const blob = await new Promise<Blob>((resolve, reject) => {
+			canvas.toBlob(
+				(result) => {
+					if (result) {
+						resolve(result);
+					} else {
+						reject(
+							new Error(
+								"Δεν ήταν δυνατή η συμπίεση της εικόνας.",
+							),
+						);
+					}
+				},
+				"image/webp",
+				QUALITY,
+			);
+		});
+
+		return blob;
+	} finally {
+		URL.revokeObjectURL(objectUrl);
+	}
+}
+
 export function MediaLibrary({
 	initialFiles,
 }: {
@@ -28,49 +88,66 @@ export function MediaLibrary({
 		setUploading(true);
 		setMessage("");
 
-		const extension =
-			file.name.split(".").pop()?.toLowerCase() || "jpg";
+		try {
+			const optimized = await optimizeImage(file);
 
-		const baseName =
-			file.name
-				.replace(/\.[^/.]+$/, "")
-				.toLowerCase()
-				.replace(/[^a-z0-9-_]+/g, "-")
-				.replace(/^-+|-+$/g, "") || "image";
+			const fileName =
+				`${Date.now()}-${file.name
+					.replace(/\.[^/.]+$/, "")
+					.toLowerCase()
+					.replace(/[^a-z0-9-_]+/g, "-")
+					.replace(/^-+|-+$/g, "") || "image"}.webp`;
 
-		const fileName = `${Date.now()}-${baseName}.${extension}`;
+			const { error } = await supabase.storage
+				.from("post-images")
+				.upload(fileName, optimized, {
+					cacheControl: "31536000",
+					upsert: false,
+					contentType: "image/webp",
+				});
 
-		const { error } = await supabase.storage
-			.from("post-images")
-			.upload(fileName, file, {
-				cacheControl: "31536000",
-				upsert: false,
-				contentType: file.type,
-			});
+			if (error) {
+				setMessage(`Σφάλμα upload: ${error.message}`);
+				return;
+			}
 
-		if (error) {
-			setMessage(`Σφάλμα upload: ${error.message}`);
+			const { data: publicUrl } = supabase.storage
+				.from("post-images")
+				.getPublicUrl(fileName);
+
+			setFiles((current) => [
+				{
+					name: fileName,
+					url: publicUrl.publicUrl,
+					created_at: new Date().toISOString(),
+					size: optimized.size,
+					content_type: "image/webp",
+				},
+				...current,
+			]);
+
+			const originalMB = (
+				file.size /
+				1024 /
+				1024
+			).toFixed(2);
+
+			const optimizedKB = Math.round(
+				optimized.size / 1024,
+			);
+
+			setMessage(
+				`Η εικόνα ανέβηκε επιτυχώς: ${originalMB} MB → ${optimizedKB} KB.`,
+			);
+		} catch (error) {
+			setMessage(
+				error instanceof Error
+					? `Σφάλμα: ${error.message}`
+					: "Σφάλμα κατά την επεξεργασία της εικόνας.",
+			);
+		} finally {
 			setUploading(false);
-			return;
 		}
-
-		const { data: publicUrl } = supabase.storage
-			.from("post-images")
-			.getPublicUrl(fileName);
-
-		setFiles((current) => [
-			{
-				name: fileName,
-				url: publicUrl.publicUrl,
-				created_at: new Date().toISOString(),
-				size: file.size,
-				content_type: file.type,
-			},
-			...current,
-		]);
-
-		setMessage("Η εικόνα ανέβηκε επιτυχώς.");
-		setUploading(false);
 	}
 
 	async function deleteFile(name: string) {
