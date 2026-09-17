@@ -98,7 +98,7 @@ export function PostForm({
 				}}
 			/>
 			<div className="form-field">
-				<label>Ετικέτες</label>
+				<p className="form-label">Ετικέτες</p>
 
 				<div className="tag-selector">
 					{availableTags.length > 0 ? (
@@ -130,11 +130,7 @@ export function PostForm({
 				</div>
 				<div className="form-field" style={{ alignSelf: "end" }}>
 					<label className="publish-option">
-						<input
-							type="checkbox"
-							name="published"
-							defaultChecked={post?.published}
-						/>
+						<input type="checkbox" name="published" defaultChecked={post?.published} />
 						<span>Δημοσιευμένο</span>
 					</label>
 				</div>

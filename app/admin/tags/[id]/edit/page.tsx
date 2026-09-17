@@ -2,11 +2,7 @@ import { notFound } from "next/navigation";
 import { updateTagAction } from "@/app/actions";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function EditTagPage({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
+export default async function EditTagPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 
 	const supabase = await createClient();
@@ -53,17 +49,8 @@ export default async function EditTagPage({
 
 					<div className="form-field">
 						<label htmlFor="slug">Slug</label>
-						<input
-							id="slug"
-							type="text"
-							value={tag.slug}
-							disabled
-							readOnly
-						/>
-						<small>
-							Το slug παραμένει σταθερό ώστε να μη δημιουργούνται σπασμένα
-							links.
-						</small>
+						<input id="slug" type="text" value={tag.slug} disabled readOnly />
+						<small>Το slug παραμένει σταθερό ώστε να μη δημιουργούνται σπασμένα links.</small>
 					</div>
 
 					<div className="form-actions">

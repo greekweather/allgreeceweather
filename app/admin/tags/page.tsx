@@ -44,7 +44,7 @@ export default async function AdminTagsPage() {
 						<tbody>
 							{(tags ?? []).map((tag) => {
 								const postCount = Array.isArray(tag.post_tags)
-									? tag.post_tags[0]?.count ?? 0
+									? (tag.post_tags[0]?.count ?? 0)
 									: 0;
 
 								return (
@@ -69,10 +69,7 @@ export default async function AdminTagsPage() {
 										</td>
 
 										<td style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-											<a
-												className="button secondary"
-												href={`/admin/tags/${tag.id}/edit`}
-											>
+											<a className="button secondary" href={`/admin/tags/${tag.id}/edit`}>
 												Επεξεργασία
 											</a>
 

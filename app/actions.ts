@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 import { athensLocalToUTC } from "@/lib/date";
+import { createClient } from "@/lib/supabase/server";
 import { postInputSchema } from "@/lib/validation";
 
 function formDataToInput(formData: FormData) {
@@ -135,24 +135,19 @@ export async function updatePostAction(formData: FormData) {
 		throw new Error(error.message);
 	}
 
-	const { error: deleteTagsError } = await supabase
-		.from("post_tags")
-		.delete()
-		.eq("post_id", id);
+	const { error: deleteTagsError } = await supabase.from("post_tags").delete().eq("post_id", id);
 
 	if (deleteTagsError) {
 		throw new Error(deleteTagsError.message);
 	}
 
 	if (tagIds.length > 0) {
-		const { error: insertTagsError } = await supabase
-			.from("post_tags")
-			.insert(
-				tagIds.map((tagId) => ({
-					post_id: id,
-					tag_id: tagId,
-				})),
-			);
+		const { error: insertTagsError } = await supabase.from("post_tags").insert(
+			tagIds.map((tagId) => ({
+				post_id: id,
+				tag_id: tagId,
+			})),
+		);
 
 		if (insertTagsError) {
 			throw new Error(insertTagsError.message);
@@ -191,10 +186,7 @@ export async function deletePostAction(formData: FormData) {
 		throw new Error(fetchError?.message ?? "Το άρθρο δεν βρέθηκε.");
 	}
 
-	const { error } = await supabase
-		.from("posts")
-		.delete()
-		.eq("id", id);
+	const { error } = await supabase.from("posts").delete().eq("id", id);
 
 	if (error) {
 		throw new Error(error.message);
@@ -276,10 +268,7 @@ export async function updateTagAction(formData: FormData) {
 
 	const supabase = await createClient();
 
-	const { error } = await supabase
-		.from("tags")
-		.update({ name })
-		.eq("id", id);
+	const { error } = await supabase.from("tags").update({ name }).eq("id", id);
 
 	if (error) {
 		if (error.code === "23505") {
@@ -307,10 +296,7 @@ export async function deleteTagAction(formData: FormData) {
 
 	const supabase = await createClient();
 
-	const { error } = await supabase
-		.from("tags")
-		.delete()
-		.eq("id", id);
+	const { error } = await supabase.from("tags").delete().eq("id", id);
 
 	if (error) {
 		throw new Error(error.message);

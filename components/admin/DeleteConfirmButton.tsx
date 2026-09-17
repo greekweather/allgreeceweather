@@ -17,11 +17,7 @@ export function DeleteConfirmButton({
 
 	return (
 		<>
-			<button
-				className="button danger"
-				type="button"
-				onClick={() => setShowConfirm(true)}
-			>
+			<button className="button danger" type="button" onClick={() => setShowConfirm(true)}>
 				Διαγραφή
 			</button>
 
@@ -36,13 +32,10 @@ export function DeleteConfirmButton({
 						<h2 id="delete-confirm-title">Διαγραφή {itemType}</h2>
 
 						<p>
-							Είσαι σίγουρος ότι θέλεις να διαγράψεις το {itemType}{" "}
-							<strong>«{name}»</strong>;
+							Είσαι σίγουρος ότι θέλεις να διαγράψεις το {itemType} <strong>«{name}»</strong>
 						</p>
 
-						<p className="delete-confirm-warning">
-							Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.
-						</p>
+						<p className="delete-confirm-warning">Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</p>
 
 						<div className="form-actions">
 							<button

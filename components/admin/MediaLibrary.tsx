@@ -24,15 +24,11 @@ async function optimizeImage(file: File): Promise<Blob> {
 	try {
 		await new Promise<void>((resolve, reject) => {
 			image.onload = () => resolve();
-			image.onerror = () =>
-				reject(new Error("Δεν ήταν δυνατή η ανάγνωση της εικόνας."));
+			image.onerror = () => reject(new Error("Δεν ήταν δυνατή η ανάγνωση της εικόνας."));
 			image.src = objectUrl;
 		});
 
-		const scale = Math.min(
-			1,
-			MAX_WIDTH / image.naturalWidth,
-		);
+		const scale = Math.min(1, MAX_WIDTH / image.naturalWidth);
 
 		const width = Math.round(image.naturalWidth * scale);
 		const height = Math.round(image.naturalHeight * scale);
@@ -55,11 +51,7 @@ async function optimizeImage(file: File): Promise<Blob> {
 					if (result) {
 						resolve(result);
 					} else {
-						reject(
-							new Error(
-								"Δεν ήταν δυνατή η συμπίεση της εικόνας.",
-							),
-						);
+						reject(new Error("Δεν ήταν δυνατή η συμπίεση της εικόνας."));
 					}
 				},
 				"image/webp",
@@ -73,11 +65,7 @@ async function optimizeImage(file: File): Promise<Blob> {
 	}
 }
 
-export function MediaLibrary({
-	initialFiles,
-}: {
-	initialFiles: MediaFile[];
-}) {
+export function MediaLibrary({ initialFiles }: { initialFiles: MediaFile[] }) {
 	const [files, setFiles] = useState(initialFiles);
 	const [uploading, setUploading] = useState(false);
 	const [message, setMessage] = useState("");
@@ -91,29 +79,26 @@ export function MediaLibrary({
 		try {
 			const optimized = await optimizeImage(file);
 
-			const fileName =
-				`${Date.now()}-${file.name
+			const fileName = `${Date.now()}-${
+				file.name
 					.replace(/\.[^/.]+$/, "")
 					.toLowerCase()
 					.replace(/[^a-z0-9-_]+/g, "-")
-					.replace(/^-+|-+$/g, "") || "image"}.webp`;
+					.replace(/^-+|-+$/g, "") || "image"
+			}.webp`;
 
-			const { error } = await supabase.storage
-				.from("post-images")
-				.upload(fileName, optimized, {
-					cacheControl: "31536000",
-					upsert: false,
-					contentType: "image/webp",
-				});
+			const { error } = await supabase.storage.from("post-images").upload(fileName, optimized, {
+				cacheControl: "31536000",
+				upsert: false,
+				contentType: "image/webp",
+			});
 
 			if (error) {
 				setMessage(`Σφάλμα upload: ${error.message}`);
 				return;
 			}
 
-			const { data: publicUrl } = supabase.storage
-				.from("post-images")
-				.getPublicUrl(fileName);
+			const { data: publicUrl } = supabase.storage.from("post-images").getPublicUrl(fileName);
 
 			setFiles((current) => [
 				{
@@ -126,19 +111,11 @@ export function MediaLibrary({
 				...current,
 			]);
 
-			const originalMB = (
-				file.size /
-				1024 /
-				1024
-			).toFixed(2);
+			const originalMB = (file.size / 1024 / 1024).toFixed(2);
 
-			const optimizedKB = Math.round(
-				optimized.size / 1024,
-			);
+			const optimizedKB = Math.round(optimized.size / 1024);
 
-			setMessage(
-				`Η εικόνα ανέβηκε επιτυχώς: ${originalMB} MB → ${optimizedKB} KB.`,
-			);
+			setMessage(`Η εικόνα ανέβηκε επιτυχώς: ${originalMB} MB → ${optimizedKB} KB.`);
 		} catch (error) {
 			setMessage(
 				error instanceof Error
@@ -151,24 +128,18 @@ export function MediaLibrary({
 	}
 
 	async function deleteFile(name: string) {
-		const confirmed = window.confirm(
-			`Θέλεις σίγουρα να διαγράψεις την εικόνα "${name}";`,
-		);
+		const confirmed = window.confirm(`Θέλεις σίγουρα να διαγράψεις την εικόνα "${name}";`);
 
 		if (!confirmed) return;
 
-		const { error } = await supabase.storage
-			.from("post-images")
-			.remove([name]);
+		const { error } = await supabase.storage.from("post-images").remove([name]);
 
 		if (error) {
 			setMessage(`Σφάλμα διαγραφής: ${error.message}`);
 			return;
 		}
 
-		setFiles((current) =>
-			current.filter((file) => file.name !== name),
-		);
+		setFiles((current) => current.filter((file) => file.name !== name));
 
 		setMessage("Η εικόνα διαγράφηκε.");
 	}
@@ -182,9 +153,7 @@ export function MediaLibrary({
 		<div>
 			<div className="media-upload-card">
 				<label className="media-upload-label">
-					<span>
-						{uploading ? "Ανέβασμα..." : "Ανέβασε εικόνα"}
-					</span>
+					<span>{uploading ? "Ανέβασμα..." : "Ανέβασε εικόνα"}</span>
 
 					<input
 						type="file"
@@ -205,9 +174,7 @@ export function MediaLibrary({
 				<p>JPG, PNG, WebP, GIF ή AVIF.</p>
 			</div>
 
-			{message && (
-				<div className="notice success">{message}</div>
-			)}
+			{message && <div className="notice success">{message}</div>}
 
 			{files.length === 0 ? (
 				<div className="form-card">
@@ -218,24 +185,13 @@ export function MediaLibrary({
 					{files.map((file) => (
 						<article className="media-card" key={file.name}>
 							<div className="media-preview">
-								<Image
-									src={file.url}
-									alt={file.name}
-									width={700}
-									height={438}
-								/>
+								<Image src={file.url} alt={file.name} width={700} height={438} />
 							</div>
 
 							<div className="media-card-body">
-								<strong title={file.name}>
-									{file.name}
-								</strong>
+								<strong title={file.name}>{file.name}</strong>
 
-								{file.size !== null && (
-									<span>
-										{Math.round(file.size / 1024)} KB
-									</span>
-								)}
+								{file.size !== null && <span>{Math.round(file.size / 1024)} KB</span>}
 
 								<div className="media-actions">
 									<button

@@ -16,15 +16,13 @@ async function listAllFiles(
 	supabase: Awaited<ReturnType<typeof createClient>>,
 	path = "",
 ): Promise<StorageFile[]> {
-	const { data, error } = await supabase.storage
-		.from("post-images")
-		.list(path, {
-			limit: 1000,
-			sortBy: {
-				column: "created_at",
-				order: "desc",
-			},
-		});
+	const { data, error } = await supabase.storage.from("post-images").list(path, {
+		limit: 1000,
+		sortBy: {
+			column: "created_at",
+			order: "desc",
+		},
+	});
 
 	if (error) {
 		throw new Error(error.message);
@@ -56,9 +54,7 @@ export default async function MediaPage() {
 	const storageFiles = await listAllFiles(supabase);
 
 	const files = storageFiles.map((file) => {
-		const { data: publicUrl } = supabase.storage
-			.from("post-images")
-			.getPublicUrl(file.name);
+		const { data: publicUrl } = supabase.storage.from("post-images").getPublicUrl(file.name);
 
 		return {
 			name: file.name,

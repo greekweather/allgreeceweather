@@ -3,20 +3,15 @@ import { updatePostAction } from "@/app/actions";
 import { PostForm } from "@/components/admin/PostForm";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function EditPostPage({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
+export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
 	const { id } = await params;
 
 	const supabase = await createClient();
 
-	const [{ data, error }, { data: availableTags, error: tagsError }] =
-		await Promise.all([
-			supabase
-				.from("posts")
-				.select(`
+	const [{ data, error }, { data: availableTags, error: tagsError }] = await Promise.all([
+		supabase
+			.from("posts")
+			.select(`
 					id,
 					title,
 					slug,
@@ -30,14 +25,11 @@ export default async function EditPostPage({
 						tag_id
 					)
 				`)
-				.eq("id", id)
-				.single(),
+			.eq("id", id)
+			.single(),
 
-			supabase
-				.from("tags")
-				.select("id,name")
-				.order("name", { ascending: true }),
-		]);
+		supabase.from("tags").select("id,name").order("name", { ascending: true }),
+	]);
 
 	if (error || !data) {
 		notFound();

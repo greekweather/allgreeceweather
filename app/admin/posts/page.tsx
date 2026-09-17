@@ -44,18 +44,14 @@ export default async function AdminPostsPage({
 
 					<div className="admin-sort-buttons">
 						<a
-							className={`button secondary ${
-								sortOrder === "latest" ? "active" : ""
-							}`}
+							className={`button secondary ${sortOrder === "latest" ? "active" : ""}`}
 							href="/admin/posts?sort=latest"
 						>
 							Νεότερα πρώτα
 						</a>
 
 						<a
-							className={`button secondary ${
-								sortOrder === "oldest" ? "active" : ""
-							}`}
+							className={`button secondary ${sortOrder === "oldest" ? "active" : ""}`}
 							href="/admin/posts?sort=oldest"
 						>
 							Παλαιότερα πρώτα
@@ -85,11 +81,7 @@ export default async function AdminPostsPage({
 									</td>
 
 									<td>
-										<span
-											className={`status ${
-												post.published ? "published" : "draft"
-											}`}
-										>
+										<span className={`status ${post.published ? "published" : "draft"}`}>
 											{post.published ? "Δημοσιευμένο" : "Πρόχειρο"}
 										</span>
 									</td>
@@ -105,10 +97,7 @@ export default async function AdminPostsPage({
 											flexWrap: "wrap",
 										}}
 									>
-										<a
-											className="button secondary"
-											href={`/admin/posts/${post.id}/edit`}
-										>
+										<a className="button secondary" href={`/admin/posts/${post.id}/edit`}>
 											Επεξεργασία
 										</a>
 

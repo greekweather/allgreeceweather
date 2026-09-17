@@ -21,10 +21,7 @@ export default async function NewPostPage() {
 					<h2>Νέο άρθρο</h2>
 				</div>
 
-				<PostForm
-					action={createPostAction}
-					availableTags={tags ?? []}
-				/>
+				<PostForm action={createPostAction} availableTags={tags ?? []} />
 			</div>
 		</section>
 	);
