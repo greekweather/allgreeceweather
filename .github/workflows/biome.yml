@@ -1,4 +1,4 @@
-name: Biome
+name: Code Quality
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  biome:
-    name: Biome
+  check:
+    name: Biome + Build
     runs-on: ubuntu-latest
 
     steps:
@@ -28,3 +28,6 @@ jobs:
 
       - name: Run Biome
         run: npx biome ci .
+
+      - name: Build Next.js
+        run: npm run build
