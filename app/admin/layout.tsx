@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 			<aside className="admin-sidebar">
 				<div className="admin-brand">
 					<p className="eyebrow">ADMIN</p>
-					<strong>AllGreeceWeather</strong>
+					<strong>GreeceWeather</strong>
 				</div>
 
 				<nav className="admin-sidebar-nav" aria-label="Admin navigation">

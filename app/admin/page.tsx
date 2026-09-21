@@ -15,7 +15,7 @@ export default async function AdminPage() {
 				<div>
 					<p className="eyebrow">DASHBOARD</p>
 					<h1>Πίνακας ελέγχου</h1>
-					<p>Διαχείριση του περιεχομένου του AllGreeceWeather.</p>
+					<p>Διαχείριση του περιεχομένου του GreeceWeather.</p>
 				</div>
 			</header>
 

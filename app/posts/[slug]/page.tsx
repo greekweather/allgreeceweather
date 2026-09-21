@@ -17,7 +17,7 @@ export async function generateMetadata({
 	const post = await getPublishedPostBySlug(slug);
 	if (!post) return {};
 	return {
-		title: `${post.title} · AllGreeceWeather`,
+		title: `${post.title} · GreeceWeather`,
 		description: post.description,
 		openGraph: {
 			title: post.title,

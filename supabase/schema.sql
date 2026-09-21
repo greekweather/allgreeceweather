@@ -1,4 +1,4 @@
--- AllGreeceWeather: production-oriented schema.
+-- GreeceWeather: production-oriented schema.
 -- Run in Supabase SQL Editor after creating the project.
 -- Public readers can only SELECT published articles.
 -- Admin writes are authorized through public.admin_users + is_admin().

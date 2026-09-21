@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-	title: "AllGreeceWeather",
+	title: "GreeceWeather",
 	description: "Μετεωρολογικές αναλύσεις, προγνώσεις και άρθρα για τον καιρό στην Ελλάδα.",
 	metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
 };
@@ -16,8 +16,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				</a>
 				<header className="site-header">
 					<div className="container header-inner">
-						<a className="brand" href="/" aria-label="Αρχική σελίδα AllGreeceWeather">
-							AllGreeceWeather
+						<a className="brand" href="/" aria-label="Αρχική σελίδα GreeceWeather">
+							GreeceWeather
 						</a>
 						<nav className="site-nav" aria-label="Κύρια πλοήγηση">
 							<a href="/">Αρχική</a>
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				<footer className="site-footer">
 					<div className="container footer-inner">
 						<div>
-							<strong>AllGreeceWeather</strong>
+							<strong>GreeceWeather</strong>
 							<span> · {new Date().getFullYear()}</span>
 						</div>
 						<div>Μετεωρολογία και καιρός στην Ελλάδα</div>

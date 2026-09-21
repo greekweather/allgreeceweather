@@ -31,10 +31,10 @@ jobs:
             <meta charset="UTF-8">
             <meta http-equiv="refresh" content="0; url=https://allgreeceweather.vercel.app/">
             <link rel="canonical" href="https://allgreeceweather.vercel.app/">
-            <title>AllGreeceWeather</title>
+            <title>GreeceWeather</title>
           </head>
           <body>
-            <p>Redirecting to <a href="https://allgreeceweather.vercel.app/">AllGreeceWeather</a>...</p>
+            <p>Redirecting to <a href="https://allgreeceweather.vercel.app/">GreeceWeather</a>...</p>
           </body>
           </html>
           EOF
