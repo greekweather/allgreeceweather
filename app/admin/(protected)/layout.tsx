@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 				</div>
 
 				<nav className="admin-sidebar-nav" aria-label="Admin navigation">
-					<a href="/admin">Πίνακας Ελέχου</a>
+					<a href="/admin">Πίνακας Ελέγχου</a>
 
 					<div className="admin-nav-group">
 						<span>Περιεχόμενο</span>
