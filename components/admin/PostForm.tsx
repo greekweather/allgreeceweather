@@ -98,7 +98,7 @@ export function PostForm({
 				}}
 			/>
 			<div className="form-field">
-				<p className="form-label">Ετικέτες</p>
+				<label>Ετικέτες</label>
 
 				<div className="tag-selector">
 					{availableTags.length > 0 ? (
