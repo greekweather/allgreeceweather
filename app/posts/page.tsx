@@ -23,6 +23,7 @@ export default async function PostsPage() {
 						{posts.map((post) => (
 							<div
 								key={post.id}
+								data-title={post.title}
 								data-tags={post.tags.map((t) => t.toLocaleLowerCase("el-GR")).join("|")}
 								data-date={post.published_at ? Date.parse(post.published_at) : 0}
 								data-views={post.views}
